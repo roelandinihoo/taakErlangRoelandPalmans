@@ -94,6 +94,14 @@ totaalInkomenVanEigenaar(Eigenaar)->
     aanvangDatum = '_', huurMaanden = '_'}, [], ['$1']}]),
   lists:sum(alleBetalingenPerKamers(Kamernummers)).
 
+%%Totaal inkomen van een eigenaar over alle contracten op 1 jaar
+totaalInkomenVanEigenaarOpJaar(Eigenaar, Jaartal)->
+  Kamernummers = ets:select(contracten,[{ #contract{kamerNr ='$1',
+    eigenaar =Eigenaar, huurder ='_',
+    huur = '_', voorschotEnergie = '_',
+    aanvangDatum = '_', huurMaanden = '_'}, [], ['$1']}]),
+  lists:sum(alleBetalingenPerKamersPerJaar(Kamernummers,Jaartal)).
+
 alleBetalingenPerKamers([Kamernummer]) ->
   lists:append([
     ets:select(betalingen, [{#betaling{kamerNr = Kamernummer,datum = '_',bedrag = '$1'}, [], ['$1']}]),
@@ -105,6 +113,22 @@ alleBetalingenPerKamers([Kamernummer|KamernummerS]) ->
     ets:select(betalingen, [{#aanpassing{kamerNr = Kamernummer,datum = '_',bedrag = '$1', reden = '_'}, [], ['$1']}]),
     ets:select(betalingen, [{#energieKosten{kamerNr = Kamernummer,datum = '_',bedrag = '$1'}, [], ['$1']}]),
   alleBetalingenPerKamers(KamernummerS)]).
+
+alleBetalingenPerKamersPerJaar([Kamernummer], Jaartal) ->
+  BeginDat = database:dateToDays({Jaartal,01,01}),
+  EindDat = database:dateToDays({Jaartal,12,31}),
+  lists:append([
+    ets:select(betalingen, [{#betaling{kamerNr = Kamernummer,datum = '$1',bedrag = '$2'}, [{'=<','$1',{const,EindDat}},{'>=','$1',{const,BeginDat}}], ['$2']}]),
+    ets:select(betalingen, [{#aanpassing{kamerNr = Kamernummer,datum = '$1',bedrag = '$2', reden = '_'}, [{'=<','$1',{const,EindDat}},{'>=','$1',{const,BeginDat}}], ['$2']}]),
+    ets:select(betalingen, [{#energieKosten{kamerNr = Kamernummer,datum = '$1',bedrag = '$2'}, [{'=<','$1',{const,EindDat}},{'>=','$1',{const,BeginDat}}], ['$2']}])]);
+alleBetalingenPerKamersPerJaar([Kamernummer|KamernummerS], Jaartal) ->
+  BeginDat = database:dateToDays({Jaartal,01,01}),
+  EindDat = database:dateToDays({Jaartal,12,31}),
+  lists:append([
+    ets:select(betalingen, [{#betaling{kamerNr = Kamernummer,datum = '$1',bedrag = '$2'}, [{'=<','$1',{const,EindDat}},{'>=','$1',{const,BeginDat}}], ['$2']}]),
+    ets:select(betalingen, [{#aanpassing{kamerNr = Kamernummer,datum = '$1',bedrag = '$2', reden = '_'}, [{'=<','$1',{const,EindDat}},{'>=','$1',{const,BeginDat}}], ['$2']}]),
+    ets:select(betalingen, [{#energieKosten{kamerNr = Kamernummer,datum = '$1',bedrag = '$2'}, [{'=<','$1',{const,EindDat}},{'>=','$1',{const,BeginDat}}], ['$2']}]),
+    alleBetalingenPerKamersPerJaar(KamernummerS, Jaartal)]).
 
 %%toont de datum vanaf wanneer de kamer terug beschikbaar is
 wanneerIsKamerBeschikbaar(KamerNr)->
@@ -131,11 +155,71 @@ energieKostenOver1JaarVan1Kot(Jaartal, KamerNr)->
   BeginDat = database:dateToDays({Jaartal,01,01}),
   EindDat = database:dateToDays({Jaartal,12,31}),
   lists:sum(
-  ets:select(betalingen, [{#energieKosten{datum = '$1',kamerNr = '_',bedrag = '$2'},
+  ets:select(betalingen, [{#energieKosten{datum = '$1',kamerNr = KamerNr,bedrag = '$2'},
   [{'=<','$1',{const,EindDat}},{'>=','$1',{const,BeginDat}}],
   ['$2']}])).
 
+%%prijs van een kot om dit 1 jaar te huren
 jaarprijs1Kot(KamerNr)->
   lists:map(fun(X) -> 12*X end, ets:select(contracten,[{#contract{kamerNr = KamerNr, huur = '$1',
     eigenaar ='_', huurder ='_', voorschotEnergie = '_', aanvangDatum = '_', huurMaanden = '_'}, [], ['$1']}])).
+
+%%het jaarlijks inkomen van een eigenaar als al zijn/haar koten vol zitten
+jaarlijksInkomenVolKotEigenaar([Eigenaar]) ->
+  [lists:sum(
+    ets:select(contracten,[{ #contract{kamerNr ='_',
+      eigenaar =Eigenaar, huurder ='_',
+      huur = '$1', voorschotEnergie = '_',
+      aanvangDatum = '_', huurMaanden = '_'}, [], ['$1']}]))];
+jaarlijksInkomenVolKotEigenaar([Eigenaar|EigenaarS]) ->
+  lists:append(
+    ets:select(contracten,[{ #contract{kamerNr ='_',
+      eigenaar =Eigenaar, huurder ='_',
+      huur = '$1', voorschotEnergie = '_',
+      aanvangDatum = '_', huurMaanden = '_'}, [], ['$1']}]), jaarlijksInkomenVolKotEigenaar(EigenaarS));
+jaarlijksInkomenVolKotEigenaar(Eigenaar) ->
+  lists:sum(
+    ets:select(contracten,[{ #contract{kamerNr ='_',
+      eigenaar =Eigenaar, huurder ='_',
+      huur = '$1', voorschotEnergie = '_',
+      aanvangDatum = '_', huurMaanden = '_'}, [], ['$1']}]))*12.
+
+%%Gemiddelde inkomen van alle eigenaars per jaar met een vol kot
+gemiddeldInkomenEigenaars() ->
+  Eigenaars = lists:usort(ets:select(contracten,[{ #contract{kamerNr ='_',
+    eigenaar ='$1', huurder ='_',
+    huur = '_', voorschotEnergie = '_',
+    aanvangDatum = '_', huurMaanden = '_'}, [], ['$1']}])),
+  lists:sum(jaarlijksInkomenVolKotEigenaar(Eigenaars))/length(Eigenaars).
+
+%%Gemiddelde huur van alle koten
+gemiddeldHuur() ->
+  Huren = ets:select(contracten,[{ #contract{kamerNr ='_',
+    eigenaar ='_', huurder ='_',
+    huur = '$1', voorschotEnergie = '_',
+    aanvangDatum = '_', huurMaanden = '_'}, [], ['$1']}]),
+  lists:sum(Huren)/length(Huren).
+
+%%toont het goedkoopste kot
+goedkoopsteKot() ->
+  GoedkoopsteHuur = lists:min(ets:select(contracten,[{ #contract{kamerNr ='_',
+    eigenaar ='_', huurder ='_',
+    huur = '$1', voorschotEnergie = '_',
+    aanvangDatum = '_', huurMaanden = '_'}, [], ['$1']}])),
+  ets:select(contracten,[{ #contract{kamerNr ='$1',
+    eigenaar ='_', huurder ='_',
+    huur = GoedkoopsteHuur, voorschotEnergie = '_',
+    aanvangDatum = '_', huurMaanden = '_'}, [], ['$1']}]).
+
+%%toont het duurste kot
+duursteKot() ->
+  GoedkoopsteHuur = lists:max(ets:select(contracten,[{ #contract{kamerNr ='_',
+    eigenaar ='_', huurder ='_',
+    huur = '$1', voorschotEnergie = '_',
+    aanvangDatum = '_', huurMaanden = '_'}, [], ['$1']}])),
+  ets:select(contracten,[{ #contract{kamerNr ='$1',
+    eigenaar ='_', huurder ='_',
+    huur = GoedkoopsteHuur, voorschotEnergie = '_',
+    aanvangDatum = '_', huurMaanden = '_'}, [], ['$1']}]).
+
 %%  io:fwrite("~w~n",  [Lijst]).
