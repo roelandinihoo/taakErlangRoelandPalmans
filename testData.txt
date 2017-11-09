@@ -2,30 +2,30 @@
 Erlang testdata:
 
 Het aantal kamers van baas1 = 3.
-Het totale inkomen van baas2 over alle contracten = 9282.
-Het totale inkomen van baas3 over 1 jaar = 3772.
+Het totale inkomen van baas2 over alle contracten = 9389.
+Het totale inkomen van baas3 over 1 jaar = 3775.
 De lijst van alle bedragen die kamer 1 heeft betaald = 
-[300,300,300,300,300,300,300,300,300,300,10,7,12,14,7,7,8,13,9,9]
+[300,300,300,300,300,300,300,300,300,300,-44,-4,9,11,12,11,9,10,12,8,15,13]
 
 De lijst van alle bedragen die meerdere kamers betaald hebben = 
-[300,300,300,300,300,300,300,300,300,300,10,7,12,14,7,7,8,13,9,9,350,350,350,
+[300,300,300,300,300,300,300,300,300,300,-44,-4,9,11,12,11,9,10,12,8,15,13,
  350,350,350,350,350,350,350,350,350,350,350,350,350,350,350,350,350,350,350,
- 350,350,3,-28,37,4,-14,15,11,10,10,13,11,13,13,15,8,10,9,6,10,13,9,12,6,10,8,
- 12,6,15,10]
+ 350,350,350,350,350,31,-48,38,-47,-36,5,9,12,9,8,13,11,8,10,11,12,8,7,14,8,
+ 12,7,12,6,12,12,11,12,13,6]
 
 De lijst met betaling van kamer 1 in het jaar 2016 = 
-[300,300,300,300,10,7,12,14]
+[300,300,300,300,-44,9,11,12,11]
 
 De lijst van alle bedragen die meerdere kamers betaald hebben in 2016 = 
-[300,300,300,300,300,300,7,7,8,13,9,9,350,350,350,350,350,350,350,350,350,350,
- 350,350,-28,13,11,13,13,15,8,10,9,6,10,13,9]
+[300,300,300,300,300,300,-4,9,10,12,8,15,13,350,350,350,350,350,350,350,350,
+ 350,350,350,350,-48,38,-47,-36,5,13,11,8,10,11,12,8,7,14,8,12,7]
 
 Kamer 3 is beschikbaar op {2018,9,14}.
-De energiekosten van het jaar 2016 van het hele huis = 420.
-De energiekosten van kamer 3 in 2016 = 40.
+De energiekosten van het jaar 2016 van het hele huis = 414.
+De energiekosten van kamer 3 in 2016 = 54.
 De prijs voor kot 5 1 jaar te huren = [3900].
 Het jaarlijks inkomen van baas2 = [0].
-Het jaarlijks inkomen van baas2 en baas3 = 900.0.
+Het gemiddeld inkomen van alle eigenaars = 900.0.
 De gemiddelde huur van alle koten = 300.0.
 Het goedkoopste kot = kot nr[3].
 Het duurste kot = kot nr[2].
