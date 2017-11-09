@@ -84,7 +84,7 @@ createBetalingen([Nr|NrS], [Pr|PrS], [Dat|DatS], [Maanden|MaandenS]) ->
 
 
 %%Geeft het aantal kamers dat een eigenaar bezit
-%%Test: start:aantalKamersVanEigenaar("baas1").
+%%Test: start:aantalKamersVanEigenaar(Eigenaar)
 aantalKamersVanEigenaar(Eigenaar) ->
   length(ets:select(contracten,[{ #contract{kamerNr ='$1',
     eigenaar =Eigenaar, huurder ='_',

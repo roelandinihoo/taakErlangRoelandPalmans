@@ -38,8 +38,6 @@ voerFunctiesUit()->
   PrijsKot1Jaar = start:jaarprijs1Kot(5),
 %%  Berekent het jaarlijks inkomen van een eigenaar als alle koten vol zitten
   JaarlijksInkomen1Eigenaar = start:jaarlijksInkomenVolKotEigenaar("baas2"),
-%%  Berekent het jaarlijks inkomen van meerdere eigenaars als alle koten vol zitten
-  JaarlijksInkomenMeerderEigenaars = start:jaarlijksInkomenVolKotEigenaar(["baas2","baas3"]),
 %%  Berekent het gemiddelde inkomen van alle eigenaars
   GemInkom = start:gemiddeldInkomenEigenaars(),
 %%  Berekent de gemiddelde huur van alle koten
@@ -65,11 +63,10 @@ De energiekosten van kamer 3 in 2016 = ~p.
 De prijs voor kot 5 1 jaar te huren = ~p.
 Het jaarlijks inkomen van baas2 = ~p.
 Het jaarlijks inkomen van baas2 en baas3 = ~p.
-Het gemiddeld inkomen van alle eigenaars = ~p.
 De gemiddelde huur van alle koten = ~p.
 Het goedkoopste kot = kot nr~p.
 Het duurste kot = kot nr~p.",
     [AantalKamersBaas1,TotInkEig, TotInkEig1Jaar,
     AlleBet1Kamer, AlleBetMeerKamers, AlleBet1Kamer1J, AlleBetMeerKamers1J, Beschikbaar,
-    EnergieKosten1Jaar, EnergieKosten1Jaar1Kot, PrijsKot1Jaar, JaarlijksInkomen1Eigenaar, JaarlijksInkomenMeerderEigenaars,
+    EnergieKosten1Jaar, EnergieKosten1Jaar1Kot, PrijsKot1Jaar, JaarlijksInkomen1Eigenaar,
     GemInkom, GemHuur, GoedkoopstKot, DuursteKot])).
