@@ -12,6 +12,8 @@
 %% API
 -compile(export_all).
 
+
+%%bij het starten van de shell run: start:start().
 start()->
   database:createBetalingTable(),
   database:createContractTable(),
@@ -46,7 +48,6 @@ createStandardData()->
     aanvangDatum = '_', huurMaanden = '$1'}, [], ['$1']}]),
   createBetalingen(KamerNummers,HuurPrijzen,Datums,AantalMaanden).
 
-
 %%Maakt betalingen van een student afhankelijk van het aantal maanden, de huurprijs en de datum van aanhef
 createBetalingen([Nr],[Pr],[Dat],[Maanden]) ->
   Datum = database:daysToDate(Dat),
@@ -80,6 +81,10 @@ createBetalingen([Nr|NrS], [Pr|PrS], [Dat|DatS], [Maanden|MaandenS]) ->
   end.
 
 
+
+
+%%Geeft het aantal kamers dat een eigenaar bezit
+%%Test: start:aantalKamersVanEigenaar("baas1").
 aantalKamersVanEigenaar(Eigenaar) ->
   length(ets:select(contracten,[{ #contract{kamerNr ='$1',
     eigenaar =Eigenaar, huurder ='_',
@@ -221,5 +226,6 @@ duursteKot() ->
     eigenaar ='_', huurder ='_',
     huur = GoedkoopsteHuur, voorschotEnergie = '_',
     aanvangDatum = '_', huurMaanden = '_'}, [], ['$1']}]).
+
 
 %%  io:fwrite("~w~n",  [Lijst]).
